@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#070a10">
+<title>HECG01 Console</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void:#03050a; --chassis:#070a10; --panel:#0b0f16; --panel-2:#0f141d;
+  --hair:rgba(146,176,210,.10); --hair-2:rgba(146,176,210,.19); --hair-3:rgba(146,176,210,.30);
+  --ink:#e9f1f9; --ink-2:#9fb3c8; --ink-3:#6b7f94; --ink-4:#465768;
+  --accent:#57e0f0; --accent-dim:rgba(87,224,240,.11);
+  --ok:#3ddc97; --warn:#f5b544; --bad:#ff6b7d;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Consolas,monospace;
+  --sans:"Inter",-apple-system,"Segoe UI",Roboto,system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;min-height:100dvh;font-family:var(--sans);color:var(--ink);
+  background:var(--chassis);
+  background-image:radial-gradient(1200px 560px at 50% -12%,rgba(28,58,84,.34),transparent 70%);
+  display:flex;flex-direction:column;align-items:center;
+  padding:max(28px,env(safe-area-inset-top)) 18px max(28px,env(safe-area-inset-bottom));
+}
+.wrap{width:100%;max-width:620px}
+header{display:flex;align-items:center;gap:11px;margin-bottom:6px}
+.mark{
+  width:36px;height:36px;border-radius:9px;display:grid;place-items:center;flex-shrink:0;
+  background:radial-gradient(120% 120% at 30% 10%,#123540,#07141b);
+  border:1px solid rgba(87,224,240,.34);box-shadow:inset 0 1px rgba(255,255,255,.11),0 0 16px rgba(87,224,240,.14);
+}
+.mark svg{width:21px;height:21px;stroke:var(--accent);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+h1{margin:0;font-size:19px;font-weight:800;letter-spacing:.3px}
+.kicker{display:block;font:700 8px var(--mono);letter-spacing:1.7px;color:var(--ink-4);margin-top:2px}
+.lede{margin:14px 0 22px;font-size:13.5px;line-height:1.65;color:var(--ink-2)}
+
+.cards{display:grid;gap:11px}
+a.card{
+  display:flex;align-items:center;gap:14px;padding:16px;text-decoration:none;color:inherit;
+  background:linear-gradient(180deg,#0c1017,#080b11);
+  border:1px solid var(--hair);border-radius:11px;
+  box-shadow:inset 0 1px rgba(255,255,255,.028);
+  transition:border-color .16s ease,transform .16s ease;
+}
+@media (hover:hover){ a.card:hover{border-color:var(--hair-3);transform:translateY(-1px)} }
+a.card:active{transform:translateY(0)}
+.glyph{
+  width:44px;height:44px;flex-shrink:0;border-radius:9px;display:grid;place-items:center;
+  background:var(--accent-dim);border:1px solid rgba(87,224,240,.24);font-size:21px;
+}
+.body{flex:1 1 auto;min-width:0}
+.body b{display:block;font-size:14.5px;font-weight:700;letter-spacing:.2px}
+.body span{display:block;margin-top:3px;font-size:11.5px;line-height:1.55;color:var(--ink-3)}
+.chev{color:var(--ink-4);font-size:19px;flex-shrink:0}
+.body span.tag{
+  display:inline-block;width:auto;margin-top:7px;padding:2px 7px;border-radius:3px;
+  font:700 8px var(--mono);letter-spacing:.7px;
+  color:var(--accent);border:1px solid rgba(87,224,240,.26);background:var(--accent-dim);
+}
+
+.note{
+  margin-top:22px;padding:13px 15px;border-left:2px solid var(--warn);
+  background:rgba(245,181,68,.055);border-radius:0 7px 7px 0;
+  font-size:12px;line-height:1.7;color:#dcc08e;
+}
+.note b{color:#f0d9a8}
+.note code{font-family:var(--mono);font-size:11px;color:var(--ink-2)}
+.check{margin-top:16px;padding:13px 15px;border:1px solid var(--hair);border-radius:9px;background:rgba(255,255,255,.018)}
+.check h2{margin:0 0 9px;font:800 8.5px var(--sans);letter-spacing:1.3px;text-transform:uppercase;color:var(--accent)}
+#support{font:600 12px var(--mono);line-height:1.9}
+.ok{color:var(--ok)} .bad{color:var(--bad)} .warn{color:var(--warn)}
+footer{margin-top:24px;font-size:10.5px;line-height:1.7;color:var(--ink-4);text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="mark">
+      <svg viewBox="0 0 24 24"><path d="M2 12h3.2l1.7-4.6 2.6 9.4 2.3-6.3 1.6 3.1H18"/><circle cx="20.4" cy="12" r="1.6"/></svg>
+    </div>
+    <div>
+      <h1>HECG01 Console</h1>
+      <span class="kicker">PHYSIOLOGY ACQUISITION · ADS1292R · nRF52840</span>
+    </div>
+  </header>
+
+  <p class="lede">
+    Browser console for the HECG01 acquisition board. Connects over Bluetooth Low Energy
+    straight from this page — nothing to install.
+  </p>
+
+  <div class="cards">
+    <a class="card" href="hecg_mobile_v1.html">
+      <span class="glyph">📱</span>
+      <span class="body">
+        <b>Mobile console</b>
+        <span>Adaptive layout: one trace at a time with swipe, vitals always visible, controls in a pull-up sheet. Falls back to the full desktop layout on a large screen.</span>
+        <span class="tag">RECOMMENDED</span>
+      </span>
+      <span class="chev">›</span>
+    </a>
+
+    <a class="card" href="hecg_console.html">
+      <span class="glyph">🖥️</span>
+      <span class="body">
+        <b>Desktop console</b>
+        <span>Four simultaneous traces, inspector rail, command palette. Built for a wide screen.</span>
+      </span>
+      <span class="chev">›</span>
+    </a>
+  </div>
+
+  <div class="check">
+    <h2>This browser</h2>
+    <div id="support">checking…</div>
+  </div>
+
+  <div class="note">
+    <b>Web Bluetooth is required.</b> It works in Chrome and Edge on Android, Windows,
+    macOS and Linux. <b>It is not available in any browser on iPhone or iPad</b> —
+    Apple requires every iOS browser to use WebKit, which does not implement it, so
+    Chrome for iOS cannot connect either. The page will still load and the interface
+    works; only <code>CONNECT</code> will fail.
+  </div>
+
+  <footer>
+    Engineering / evaluation instrument. Not a medical device.<br>
+    HR, RR, HRV and signal-quality figures are acquisition quality aids, not diagnosis.
+  </footer>
+</div>
+
+<script>
+(function () {
+  const el = document.getElementById('support');
+  const rows = [];
+  const ua = navigator.userAgent;
+  const iOS = /iPad|iPhone|iPod/.test(ua) ||
+              (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const hasBle = !!navigator.bluetooth;
+  const secure = window.isSecureContext;
+
+  rows.push(hasBle
+    ? '<span class="ok">●</span> Web Bluetooth available'
+    : '<span class="bad">●</span> Web Bluetooth NOT available' + (iOS ? ' — iOS/iPadOS never exposes it' : ' — use Chrome or Edge'));
+  rows.push(secure
+    ? '<span class="ok">●</span> Secure context (HTTPS)'
+    : '<span class="bad">●</span> Not a secure context — Web Bluetooth is blocked');
+  rows.push('<span class="' + (matchMedia('(pointer: coarse)').matches ? 'ok' : 'warn') + '">●</span> ' +
+    'Viewport ' + window.innerWidth + '×' + window.innerHeight +
+    ' · DPR ' + (window.devicePixelRatio || 1).toFixed(1) +
+    (matchMedia('(pointer: coarse)').matches ? ' · touch' : ' · pointer'));
+  el.innerHTML = rows.join('<br>');
+})();
+</script>
+</body>
+</html>
